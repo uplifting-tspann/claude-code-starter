@@ -5,9 +5,10 @@ Six-plus months of accumulated rules, hooks, conventions, and workflow patterns
 — extracted from a real working setup, packaged so you don't have to invent
 them from scratch on a new machine or a new product.
 
-**Status:** v0.1 — directory skeleton + portable rules + hooks. Bootstrap
-script, project templates, and the full skill set are coming in follow-up
-passes. See [What's in v0.1 vs. coming](#whats-in-v01-vs-coming) below.
+**Status:** v0.1.1 — directory skeleton + portable rules + hooks +
+functional `bootstrap.sh` and `scripts/install-claude-config.sh`. Project
+templates and the full skill set are coming in follow-up passes. See
+[What's in v0.1 vs. coming](#whats-in-v01-vs-coming) below.
 
 ## Who this is for
 
@@ -28,31 +29,37 @@ passes. See [What's in v0.1 vs. coming](#whats-in-v01-vs-coming) below.
 
 ## Quickstart
 
-Once v0.1.x ships the bootstrap script, the install will be:
-
 ```bash
-# 1. Create a new project from this template
+# 1. Clone (or create a new project from this template)
 gh repo create my-new-project --template uplifting-tspann/claude-code-starter --public --clone
 cd my-new-project
 
-# 2. Set up the machine (Homebrew, gcloud, Node, etc.)
+# 2. Set up the machine (Homebrew, Brewfile packages, gcloud, Firebase CLI, etc.)
+#    and install the ~/.claude config skeleton in one step.
 ./bootstrap.sh
 
-# 3. Copy the .claude/ skeleton into your home dir
+# Or, if you've already done the machine setup and just want the ~/.claude
+# config skeleton:
 ./scripts/install-claude-config.sh
 ```
 
-For now (v0.1), the rules and hooks can be copied manually:
+Both scripts are idempotent and conservative:
 
-```bash
-cp -r claude/rules/*.md       ~/.claude/rules/
-cp -r claude/skills/*         ~/.claude/skills/
-cp    claude/hooks/*.sh       ~/.claude/hooks/
-chmod +x                      ~/.claude/hooks/*.sh
-```
+- `bootstrap.sh` skips Homebrew if already installed, runs `brew bundle` to
+  install/update from the included `Brewfile`, checks for the Claude Code
+  CLI (without auto-installing it), and invokes the config installer.
+- `scripts/install-claude-config.sh` **never overwrites** existing files in
+  `~/.claude/` by default. Conflicts are reported and skipped. Use
+  `--force` to overwrite (existing files get a `.bak.YYYYMMDDHHMMSS` backup
+  first). `settings.json` gets extra-special handling: if it already
+  exists, the rendered template is written next to it as
+  `settings.json.suggested` for hand-diffing rather than touched.
 
-Then wire the Stop hook in `~/.claude/settings.json` (example shape ships in
-`claude/settings.json.template` in a later pass).
+Use `--dry-run` on either script to preview what it would do without making
+any changes. `--help` on either prints full usage.
+
+After running bootstrap, follow the printed prompts to auth `gh`, `gcloud`,
+and `claude` interactively.
 
 ## Repository layout
 
@@ -61,7 +68,7 @@ claude-code-starter/
 ├── README.md                       This file — quickstart + what ships in v0.1
 ├── WHY.md                          [coming] Pedagogical: why each rule exists
 ├── LICENSE                         MIT
-├── bootstrap.sh                    [coming] One-shot machine setup
+├── bootstrap.sh                    One-shot macOS machine setup
 ├── Brewfile                        Homebrew formulae + cask for bootstrap
 ├── .vscode/                        [coming] Recommended editor settings
 ├── claude/                         Skeleton for your ~/.claude/ install
@@ -70,37 +77,46 @@ claude-code-starter/
 │   ├── hooks/                      Stop hook + pre-commit checker
 │   ├── memory/                     [coming] Memory model template
 │   ├── CLAUDE.md.template          [coming] Global instructions skeleton
-│   └── settings.json.template      [coming] Hooks wiring + permissions
+│   └── settings.json.template      Hooks wiring + permissions (with YOUR-USER placeholder)
 ├── project-template/               [coming] Per-project scaffolding
 │   ├── CLAUDE.md.template          Project-level conventions skeleton
 │   └── workstream-template/        state.md / decisions.md / open_questions.md
-└── scripts/                        [coming] sync-from-source, install-claude-config
+└── scripts/
+    └── install-claude-config.sh    Installs claude/ skeleton into ~/.claude/
 ```
 
 ## What's in v0.1 vs. coming
 
-**v0.1 (this commit):**
-- 10 portable rules in `claude/rules/` (proof-of-work, what's-next,
-  commit-discipline, no-glazing, dates-and-times, WCAG-AA, etc.)
+**Shipped:**
+- 10 portable rules in `claude/rules/`, scrubbed of project-specific
+  references (proof-of-work, what's-next, commit-discipline, no-glazing,
+  dates-and-times, WCAG-AA contrast, verify-db-objects, e2e-test-evolution,
+  help-article-evolution, changelog-evolution)
 - 2 hooks in `claude/hooks/` (Stop hook enforcing Proof of Work; pre-commit
   secret/console.log scanner)
 - 1 skill in `claude/skills/` (consolidate-memory)
-- Brewfile capturing the toolchain
+- `claude/settings.json.template` with hooks wired up + a `YOUR-USER`
+  placeholder that `scripts/install-claude-config.sh` substitutes
+- `bootstrap.sh` — macOS machine setup (Homebrew + Brewfile + Claude Code
+  check + config installer)
+- `scripts/install-claude-config.sh` — copies `claude/` skeleton into
+  `~/.claude/` with skip-existing default + `--force` for overwrites
+- `Brewfile` capturing the toolchain
+- `project-template/workstream-template/` — state.md / decisions.md /
+  open_questions.md pattern
 - LICENSE, .gitignore, this README
 
 **Coming in follow-up passes:**
-- `bootstrap.sh` — one-shot Homebrew + gcloud + gh + Claude Code install
 - `claude/CLAUDE.md.template` — global instructions skeleton with placeholders
-- `claude/settings.json.template` — Stop hook wiring + permissions baseline
 - `claude/memory/` — MEMORY.md index pattern + per-topic file template
-- `project-template/` — per-project CLAUDE.md, workstream template, `.gcloudignore`
-- More portable skills (test-runner, db-migrate, db-verify, schema-diff, log-tail,
-  code-cleanup, cross-repo-search — currently Uplift-pathed, need generalization)
+- `project-template/CLAUDE.md.template` and `.gcloudignore.template`
+- More portable skills (test-runner, db-migrate, db-verify, schema-diff,
+  log-tail, code-cleanup, cross-repo-search — currently project-pathed in
+  the source, need generalization)
 - `WHY.md` — the deep dive: why each rule, when to use what, how to evolve
 - `scripts/sync-from-source.sh` — keep the template in sync with your live
   `~/.claude/` as you iterate
-- Light Uplift-reference scrub on the rules (the patterns are general, but
-  some examples mention specific repos/incidents that should be abstracted)
+- `.vscode/extensions.json` — recommended VS Code extensions
 
 ## Why opinionated?
 
