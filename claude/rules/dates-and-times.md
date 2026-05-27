@@ -1,10 +1,12 @@
 # Date & Time Handling — Local Time Convention
 
-All dates and times in the Uplift platform are treated as **local time**, not UTC. Users operate in US timezones and expect dates to match their wall clock. UTC storage causes off-by-one day errors when YYYY-MM-DD strings are parsed as UTC midnight.
+All dates and times in this project are treated as **local time**, not UTC. Most users operate in a single timezone (or one they expect to see consistently) and expect dates to match their wall clock. UTC storage causes off-by-one day errors when YYYY-MM-DD strings are parsed as UTC midnight.
+
+> If your project is intentionally UTC-everywhere (e.g., a multi-region service with no single user timezone), invert this rule. The risk pattern is the same — pick one convention and enforce it.
 
 ## The Core Problem
 
-`new Date('2026-04-01')` in JavaScript parses as **UTC midnight**, which becomes `2026-03-31 7:00 PM` in US Eastern — shifting the displayed date back one day. This is the single most common bug in the platform.
+`new Date('2026-04-01')` in JavaScript parses as **UTC midnight**, which becomes `2026-03-31 7:00 PM` in US Eastern — shifting the displayed date back one day. This is the single most common date bug in user-facing apps.
 
 ---
 
@@ -13,25 +15,24 @@ All dates and times in the Uplift platform are treated as **local time**, not UT
 ### NEVER use `new Date(dateString)` for date-only strings
 
 ```typescript
-// ❌ WRONG — parses as UTC midnight, shifts date in US timezones
+// ❌ WRONG — parses as UTC midnight, shifts date in non-UTC timezones
 new Date('2026-04-01')
-new Date(agreement.effective_date)
+new Date(record.effective_date)
 new Date(dateString).toLocaleDateString(...)
 
 // ✅ CORRECT — use parseLocalDate or date-fns parse()
-parseLocalDate('2026-04-01')                    // from lib/utils.ts
+parseLocalDate('2026-04-01')                    // from your project's utils
 parse(dateString, 'yyyy-MM-dd', new Date())     // from date-fns
 ```
 
-### Use the existing utility functions
+### Use shared utility functions
 
-**Docs frontend** (`GCP/frontend/src/lib/utils.ts`):
+Each frontend app should expose:
+
 - `formatDate(date)` — formats as "Apr 1, 2026" (uses parseLocalDate internally)
 - `formatDateTime(date)` — formats as "Apr 1, 2026, 3:45 PM"
 - Both handle YYYY-MM-DD strings safely
-
-**Hub frontend** (`Hub/GCP/frontend/src/components/ui/DatePicker.tsx`):
-- Uses `date-fns` `parse(value, 'yyyy-MM-dd', new Date())` which treats input as local
+- Date picker components should use `date-fns` `parse(value, 'yyyy-MM-dd', new Date())` which treats input as local
 
 ### When `new Date()` IS acceptable
 - `new Date()` with no arguments (current time) — OK
@@ -49,16 +50,16 @@ parse(dateString, 'yyyy-MM-dd', new Date())     // from date-fns
 
 ```typescript
 // ❌ WRONG
-<span>{new Date(agreement.effective_date).toLocaleDateString()}</span>
+<span>{new Date(record.effective_date).toLocaleDateString()}</span>
 
-// ✅ CORRECT — import formatDate from lib/utils
+// ✅ CORRECT — import formatDate from your shared utils
 import { formatDate } from '../lib/utils';
-<span>{formatDate(agreement.effective_date)}</span>
+<span>{formatDate(record.effective_date)}</span>
 ```
 
 ### Every frontend app must have parseLocalDate
 
-If a frontend app (Hub, Docs, Help, Web, Portal) doesn't have `parseLocalDate` in its utils, add it:
+If a frontend app doesn't have `parseLocalDate` in its utils, add it:
 
 ```typescript
 export function parseLocalDate(date: string | Date): Date {

@@ -29,7 +29,7 @@ A Stop hook (`~/.claude/hooks/proof-stop-hook.sh`) enforces this: if files were 
 | **UI feature/fix** | Run dev server; drive the new path with Playwright or browser; assert DOM + check console + check 4xx/5xx |
 | **Backend route** | curl with realistic input; verify status + shape; query DB to confirm side effect; one error case |
 | **Bug fix** | Reproduce broken behavior first; apply fix; re-run same flow; add regression test; run it |
-| **Refactor** (no behavior change) | Run smoke suite (`npm run test:e2e:smoke`) |
+| **Refactor** (no behavior change) | Run smoke suite (e.g., `npm run test:e2e:smoke` or your project's equivalent) |
 | **Schema change** | Apply migration on staging DB; verify with `\d`; exercise dependent route |
 | **Trivial** (typo, comment, dead code, memory/plan file) | Visual diff or short-form proof |
 
@@ -44,9 +44,7 @@ Use the `/proof` skill for the structured protocol.
 
 ## Why this rule exists
 
-Tommy's recurring experience: "I tested the feature for the first time and the FIRST thing I tried was a bug." The cause: features get marked done without active verification. The fix: make proof a non-skippable structured output. The "Not verified:" line surfaces gaps Tommy would otherwise discover by stumbling.
-
-This rule supersedes and unifies the prior memory rules (`feedback_post_feature_validation`, `feedback_proactive_bug_hunting`, `feedback_e2e_test_philosophy`, `feedback_evolve_tests_with_features`) by giving them a single enforceable output contract.
+The recurring failure mode: "I tested the feature for the first time and the FIRST thing I tried was a bug." The cause: features get marked done without active verification. The fix: make proof a non-skippable structured output. The "Not verified:" line surfaces gaps the user would otherwise discover by stumbling.
 
 ## Exemptions (no proof required)
 

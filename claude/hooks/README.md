@@ -18,8 +18,8 @@ proof section.
 non-skippable. Without the hook, Claude forgets the section about half the
 time on long sessions.
 
-**Failure mode it prevents:** Tommy testing a "completed" feature for the
-first time and the *first thing he tries* being a bug — because Claude
+**Failure mode it prevents:** the user testing a "completed" feature for the
+first time and the *first thing they try* being a bug — because Claude
 reported done without actually exercising the change.
 
 ### `pre-commit-check.sh`

@@ -4,8 +4,8 @@ Reads recent Claude session transcripts and updates the two persistent memory fi
 
 ## When to use
 
-- Run automatically via the nightly `consolidate-memory` scheduled task
-- Run manually when you want to capture something important from the current session: `skill: "consolidate-memory"`
+- Run automatically via a nightly scheduled task
+- Run manually when you want to capture something important from the current session: `/consolidate-memory`
 
 ---
 
@@ -39,10 +39,10 @@ For each transcript, look for:
 - New patterns or conventions established
 - External service behaviors learned (API quirks, etc.)
 
-**Preferences expressed** — how Tommy likes things done:
+**Preferences expressed** — how the user likes things done:
 - Tool choices, formatting preferences, workflow preferences
-- Things Tommy corrected Claude on
-- Things Tommy explicitly approved
+- Things the user corrected Claude on
+- Things the user explicitly approved
 
 **Active work** — what's in progress:
 - Features being built and which repo/file they're in
@@ -78,14 +78,14 @@ Add to `long-term-memory.md` any items that are:
 - A **new preference** not already captured
 - A **new decision or convention** not already captured
 - An **important bug fix pattern** worth remembering
-- Something Tommy explicitly said should always/never be done
+- Something the user explicitly said should always/never be done
 
 Update existing entries if a preference has been refined or reversed.
 
 Remove entries that are no longer accurate.
 
-Keep the file organized under the existing sections:
-- **Tommy's Preferences**
+Keep the file organized under sections that fit your work, e.g.:
+- **User Preferences**
 - **Decisions & Patterns**
 - **Active Workarounds**
 - **Project Notes**
@@ -108,5 +108,5 @@ Memory consolidated.
 - **Never remove facts from long-term-memory that might still be relevant** — if unsure, keep it
 - **Don't pad recent-memory** — only capture things with future value, not full conversation summaries
 - **Don't store secrets, tokens, or credentials** in either file
-- **One-time tasks are ephemeral** — don't capture "Tommy asked me to rename a file" unless a new pattern emerged from it
-- **Prefer specific over vague** — "Always use `docs_engine` for agreement queries" beats "use the right database engine"
+- **One-time tasks are ephemeral** — don't capture "the user asked me to rename a file" unless a new pattern emerged from it
+- **Prefer specific over vague** — "Always use the read-replica engine for reporting queries" beats "use the right database engine"

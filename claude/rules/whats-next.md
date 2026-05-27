@@ -7,9 +7,9 @@ block of the response. No exceptions. This is the closer — it goes after
 `Proof of Work:`, `Changelog:`, `Help Content:`, and any other mandated
 end-of-turn sections.
 
-The point: Tommy should never have to guess what comes next or whether
+The point: the user should never have to guess what comes next or whether
 the workstream is alive or done. Each turn ends with either a decision
-he needs to make, an action he or Claude should take, or an explicit
+they need to make, an action they or Claude should take, or an explicit
 "this workstream is done."
 
 ## Required Format
@@ -26,9 +26,9 @@ the colon, capital W, capital N, smart-apostrophe-free).
 
 ## Two Modes
 
-### Mode A — Seeking Tommy's input
+### Mode A — Seeking the user's input
 
-When the next step depends on a choice Tommy needs to make, **label each
+When the next step depends on a choice the user needs to make, **label each
 option with a capital letter** (A, B, C, D). Lead with the recommended
 option when there is one, and mark it `(recommended)`.
 
@@ -36,7 +36,7 @@ option when there is one, and mark it `(recommended)`.
 What's Next:
 1. A) Ship to staging now and verify with the demo data (recommended) — fastest path; rollback is one revert
    B) Add the regression test first, then ship — slower but closes the gap that caused the original bug
-   C) Hold for tomorrow's review with Janet — only if you want her eyes on the migration shape
+   C) Hold for tomorrow's review — only if you want a second pair of eyes on the migration shape
 ```
 
 Rules for option mode:
@@ -49,24 +49,24 @@ Rules for option mode:
 
 ### Mode B — Not seeking input
 
-When the next step is a clear action (Tommy's, Claude's, or a wait
+When the next step is a clear action (the user's, Claude's, or a wait
 state), give a direct instruction or recommendation. No A/B/C labels.
 
 ```
 What's Next:
-1. Tommy: manually test the Send slideout on staging-docs (use template "Standard MSA")
+1. You: manually test the new flow on staging (use the "Standard" template)
 2. If green, authorize the commit so I can push to staging
-3. I'll create the macOS Test reminder once staging deploy lands
+3. I'll create the post-deploy reminder once staging deploy lands
 ```
 
 Rules for instruction mode:
-- Lead each item with the actor when relevant (`Tommy:`, `I'll`, or
+- Lead each item with the actor when relevant (`You:`, `I'll`, or
   imperative form).
 - Order items by what needs to happen first.
 - Be specific — "manually test on staging" is weak; name the page, the
   flow, and the expected outcome.
 - If the next step is waiting (CI, deploy, customer reply), say so
-  explicitly: `Wait for Cloud Build to deploy hub-backend-staging
+  explicitly: `Wait for CI to deploy the staging service
   (~6 min) — I'll re-check status when you ping me.`
 
 ## The "Done" Closer
@@ -111,8 +111,8 @@ materially blocking the rest of the work.
 Order of end-of-turn sections when multiple apply:
 
 1. `Proof of Work:` (or `Proof of Work: trivial — <reason>`)
-2. `Changelog:` (always when files modified)
-3. `Help Content:` (when applicable)
+2. `Changelog:` (always when files modified, if your project publishes one)
+3. `Help Content:` (when applicable, if your project has a help system)
 4. **`What's Next:`** (ALWAYS, as the final block)
 
 What's Next is the closer. Nothing follows it.
@@ -120,7 +120,7 @@ What's Next is the closer. Nothing follows it.
 ## When to Omit
 
 The only time `What's Next:` can be skipped:
-- Pure read-only exploration turns where Tommy asked a one-shot
+- Pure read-only exploration turns where the user asked a one-shot
   question and the answer is the response (e.g., "what does this regex
   match?" — answer, done, no closer needed)
 - Conversational turns with no task ("thanks", "got it")
@@ -143,18 +143,18 @@ workstream — we're done.` is always better than nothing.
   without the nested structure shown above
 - Labeling options when there's really only one path — use Mode B
 - Manufacturing a decision point ("Do you want me to write a test?")
-  when the rule already says yes (E2E coverage, real-PG, etc.) — just
+  when another rule already says yes (E2E coverage, etc.) — just
   do it and put it in instructions
 - Trailing prose after the What's Next block ("Hope this helps!") —
   What's Next is the last thing on screen
 
 ## Why This Rule Exists
 
-Without a forcing function, turns trail off into ambiguity — Tommy has
+Without a forcing function, turns trail off into ambiguity — the user has
 to read between the lines or ask "so what now?" to figure out whether
-he should be testing, committing, deciding, or waiting. Making the
+they should be testing, committing, deciding, or waiting. Making the
 closer mandatory and structured (with option labels when input is
-needed) collapses that ambiguity. He always knows the next move.
+needed) collapses that ambiguity.
 
 The "we're done" closer is equally important — it gives explicit
 permission to stop, which prevents the implicit drift of "should there
