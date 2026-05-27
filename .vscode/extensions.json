@@ -1,0 +1,29 @@
+// VS Code prompts the user to install these when they open this project.
+// Edit the list for your stack. Add Anthropic's official Claude Code
+// extension if you use it — look it up in the Marketplace rather than
+// hardcoding here, since extension IDs can change.
+{
+  "recommendations": [
+    // Frontend (TypeScript / React / Tailwind)
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "ms-playwright.playwright",
+
+    // Backend (Python)
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+
+    // Git / GitHub
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+
+    // Config files
+    "tamasfe.even-better-toml",
+    "redhat.vscode-yaml",
+
+    // Quality of life
+    "streetsidesoftware.code-spell-checker"
+  ],
+  "unwantedRecommendations": []
+}

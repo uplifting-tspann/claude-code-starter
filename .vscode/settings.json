@@ -1,0 +1,65 @@
+// Project-level VS Code settings. Override per-language formatters,
+// guarantee consistent file hygiene, and exclude noise from search/
+// file watching. User settings still win for anything not set here.
+{
+  // --- File hygiene ---
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+
+  // --- Format on save (per-language formatters below) ---
+  "editor.formatOnSave": true,
+  "editor.rulers": [100],
+
+  // --- Per-language formatters ---
+  "[javascript]":   { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]":   { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]":         { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]":        { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]":         { "editor.defaultFormatter": "redhat.vscode-yaml" },
+  "[python]":       {
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnSave": true
+  },
+  "[markdown]":     {
+    "editor.formatOnSave": false,
+    "files.trimTrailingWhitespace": false
+  },
+
+  // --- ESLint auto-fix on save (for JS/TS) ---
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // --- Tailwind: pick up class strings inside clsx() / classnames() ---
+  "tailwindCSS.experimental.classRegex": [
+    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^'\"`]*)(?:'|\"|`)"],
+    ["classnames\\(([^)]*)\\)", "(?:'|\"|`)([^'\"`]*)(?:'|\"|`)"]
+  ],
+
+  // --- Search / file watching: exclude common noise ---
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/venv": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/playwright-report": true,
+    "**/test-results": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.next/**": true,
+    "**/venv/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true
+  }
+}

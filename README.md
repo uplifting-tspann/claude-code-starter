@@ -70,7 +70,7 @@ claude-code-starter/
 ├── LICENSE                         MIT
 ├── bootstrap.sh                    One-shot macOS machine setup
 ├── Brewfile                        Homebrew formulae + cask for bootstrap
-├── .vscode/                        [coming] Recommended editor settings
+├── .vscode/                        Recommended VS Code extensions + project-level editor settings
 ├── claude/                         Skeleton for your ~/.claude/ install
 │   ├── rules/                      10 portable rules (see claude/rules/README)
 │   ├── skills/                     1 portable skill so far (more coming)
@@ -128,6 +128,12 @@ claude-code-starter/
   Comment out the casks if you manage GUI apps another way
 - `scripts/install-claude-config.sh` — copies `claude/` skeleton into
   `~/.claude/` with skip-existing default + `--force` for overwrites
+- `.vscode/extensions.json` + `.vscode/settings.json` — recommended
+  extension set (ESLint, Prettier, Tailwind IntelliSense, Playwright,
+  Python/Pylance, GitLens, GitHub PRs, YAML/TOML, spell-check) plus
+  project-level editor settings (format-on-save, per-language
+  formatters, search/watcher excludes, ESLint auto-fix). When you open
+  the project, VS Code prompts to install recommended extensions
 - `scripts/sync-from-source.sh` — diffs your live `~/.claude/{rules,
   skills,hooks}` against the template repo's `claude/` dir. Default
   is a read-only report; `--diff` includes unified diffs; `--interactive`
@@ -146,7 +152,6 @@ claude-code-starter/
   code-cleanup, repo-assessment — currently project-pathed in the
   source, need generalization. Will likely extend
   `projects-config.json` with `database` and `services` blocks.)
-- `.vscode/extensions.json` — recommended VS Code extensions
 
 ## Why opinionated?
 
