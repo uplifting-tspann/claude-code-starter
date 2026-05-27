@@ -121,7 +121,11 @@ claude-code-starter/
   files the installer copies into your live memory dir — memory is
   yours to write
 - `bootstrap.sh` — macOS machine setup (Homebrew + Brewfile + Claude Code
-  check + config installer)
+  check + config installer). The Brewfile installs the CLI toolchain
+  (`git`, `gh`, `node`, `jq`, `cloud-sql-proxy`, `firebase-cli`,
+  `gcloud-cli`, WeasyPrint deps) plus two GUI apps as casks
+  (`visual-studio-code`, `google-chrome`) for the new-machine case.
+  Comment out the casks if you manage GUI apps another way
 - `scripts/install-claude-config.sh` — copies `claude/` skeleton into
   `~/.claude/` with skip-existing default + `--force` for overwrites
 - `scripts/sync-from-source.sh` — diffs your live `~/.claude/{rules,

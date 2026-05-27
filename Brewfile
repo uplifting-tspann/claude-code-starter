@@ -5,6 +5,10 @@
 # This installs the toolchain assumed by the rules and skills in this starter:
 # GitHub CLI, Node, Cloud SQL Proxy, Firebase CLI, gcloud, plus the WeasyPrint
 # system deps needed if you generate PDFs in your backend.
+#
+# Also includes GUI app casks for a new-machine setup (VS Code, Chrome). If
+# you only want the CLI toolchain, comment out the "GUI apps" section below
+# before running `brew bundle`.
 
 # Core dev tools
 brew "git"
@@ -19,6 +23,11 @@ brew "jq"
 brew "cloud-sql-proxy"
 brew "firebase-cli"
 cask "gcloud-cli"
+
+# GUI apps (case C — new computer setup). Comment out if you already have
+# these installed or want to manage them outside Homebrew.
+cask "visual-studio-code"
+cask "google-chrome"
 
 # Docs / reporting
 brew "pandoc"
