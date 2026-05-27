@@ -1,0 +1,69 @@
+{
+  "_README": "Copy this file to ~/.claude/settings.json. Replace YOUR-USER with your macOS username (Claude Code hook commands don't expand ~). Add MCP tools and project-specific paths as you adopt them.",
+
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "WebSearch",
+      "WebFetch(*)",
+      "Skill(*)"
+    ],
+    "additionalDirectories": [
+      "/tmp",
+      "/Users/YOUR-USER/projects",
+      "/Users/YOUR-USER/.claude",
+      "/Users/YOUR-USER/.claude/plans",
+      "/Users/YOUR-USER/.claude/skills",
+      "/Users/YOUR-USER/Downloads"
+    ]
+  },
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "_comment": "Block edits to files that look like secrets/credentials.",
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; case \"$f\" in *.env|*.env.*|*credentials*|*secrets*) echo '{\"decision\":\"block\",\"reason\":\"BLOCKED: This file may contain secrets. Edit it manually.\"}' ;; esac; }",
+            "timeout": 3,
+            "statusMessage": "Checking for credential files..."
+          }
+        ]
+      },
+      {
+        "_comment": "Opinionated: enforce python3 over python. Remove this hook if your project uses python.",
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command' | { read -r cmd; case \"$cmd\" in 'python '*) echo '{\"decision\":\"block\",\"reason\":\"Use python3 instead of python.\"}' ;; esac; }",
+            "timeout": 3,
+            "statusMessage": "Checking python version..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "_comment": "Proof of Work enforcer — blocks turn-end if files were edited but the final message lacks a 'Proof of Work:' section.",
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/YOUR-USER/.claude/hooks/proof-stop-hook.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+
+  "effortLevel": "high",
+  "agentPushNotifEnabled": false,
+  "voiceEnabled": false
+}
