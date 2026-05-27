@@ -75,7 +75,7 @@ claude-code-starter/
 │   ├── rules/                      10 portable rules (see claude/rules/README)
 │   ├── skills/                     1 portable skill so far (more coming)
 │   ├── hooks/                      Stop hook + pre-commit checker
-│   ├── memory/                     [coming] Memory model template
+│   ├── memory/                     Memory model templates (README + MEMORY.md.example + per-type examples)
 │   ├── CLAUDE.md.template          Global instructions skeleton (thin — identity + universal prefs)
 │   └── settings.json.template      Hooks wiring + permissions (with YOUR-USER placeholder)
 ├── project-template/               Scaffolding for each new project
@@ -108,6 +108,11 @@ claude-code-starter/
   skeleton with sections for stack, infra, DB, frontend/backend
   conventions, testing, deploy — fill in the bracketed placeholders
   when scaffolding a new project from this template
+- `claude/memory/` — memory model templates: README explaining the
+  model + `MEMORY.md.example` index + four per-type memory examples
+  (user, feedback, project, reference). These are *examples*, not
+  files the installer copies into your live memory dir — memory is
+  yours to write
 - `bootstrap.sh` — macOS machine setup (Homebrew + Brewfile + Claude Code
   check + config installer)
 - `scripts/install-claude-config.sh` — copies `claude/` skeleton into
@@ -118,7 +123,6 @@ claude-code-starter/
 - LICENSE, .gitignore, this README
 
 **Coming in follow-up passes:**
-- `claude/memory/` — MEMORY.md index pattern + per-topic file template
 - `project-template/.gcloudignore.template` (and other useful per-project
   defaults)
 - More portable skills (test-runner, db-migrate, db-verify, schema-diff,

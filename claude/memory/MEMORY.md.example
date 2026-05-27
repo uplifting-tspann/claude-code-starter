@@ -1,0 +1,20 @@
+- [User role](user_role.md) — Solo founder building a project ops platform; deep Python + React; light on infra
+- [No auto-commit](feedback_no_auto_commit.md) — Wait for explicit auth before any git commit/push. Bundle related changes.
+- [Verify before claiming done](feedback_post_feature_validation.md) — Active verification required before "feature complete"; type-checks aren't proof.
+- [Workstream model](feedback_workstream_three_files.md) — state.md / decisions.md / open_questions.md per long-running workstream.
+- [Q4 launch state](project_q4_launch/state.md) — Current phase, blockers, next-session focus. Last updated 2026-05-22.
+- [Q4 launch decisions](project_q4_launch/decisions.md) — Append-only log of material decisions (5 entries so far).
+- [Q4 launch open questions](project_q4_launch/open_questions.md) — Tracker for unresolved questions (Q1-Q3 open).
+- [Sentry project](reference_sentry_project.md) — Errors go to Sentry org "acme", project "backend-prod"; alert rules in #eng-alerts.
+- [Stripe sandbox key](reference_stripe_sandbox.md) — Sandbox API key in 1Password vault "Engineering"; never commit a live key.
+- [Auth handoff with platform team](project_auth_handoff.md) — Platform team owns SSO; we own session/cookie handling. Coordination call Tues 2pm.
+
+> This is an example index showing what a curated MEMORY.md looks like
+> in practice. A real index might have 30-60 entries after a few weeks
+> of work; lines beyond ~200 get truncated when loaded into context, so
+> keep entries to one line under ~150 chars.
+>
+> Format: `- [Title](file.md) — one-line hook explaining why this matters`
+>
+> Never write memory content directly into MEMORY.md — it's an index
+> only. Body content lives in the per-topic files.
