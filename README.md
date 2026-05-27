@@ -99,13 +99,17 @@ claude-code-starter/
   help-article-evolution, changelog-evolution)
 - 2 hooks in `claude/hooks/` (Stop hook enforcing Proof of Work; pre-commit
   secret/console.log scanner)
-- 4 skills in `claude/skills/`: `consolidate-memory` (no config),
-  plus `proof`, `cross-repo-search`, and `test-runner` — the latter
-  three read `~/.claude/projects-config.json` for project paths,
-  dev commands, and test commands
+- 10 skills in `claude/skills/`: `consolidate-memory` (no config),
+  `proof` (optional config), and 8 config-driven skills —
+  `cross-repo-search`, `test-runner`, `db-migrate`, `db-verify`,
+  `schema-diff`, `log-tail`, `code-cleanup`, `repo-assessment`. All
+  read `~/.claude/projects-config.json` for project paths, dev/test
+  commands, database connection, deployed services, and git branch model
 - `claude/projects-config.json.example` — example schema for the
   shared per-project config (copy to `~/.claude/projects-config.json`
-  and edit before invoking `cross-repo-search` / `test-runner`)
+  and edit before invoking config-driven skills). Includes blocks for
+  `projects[]` (frontend/backend/tests/git/database/services), global
+  `search` settings, and `reports.output_dir` for nightly skills
 - `claude/settings.json.template` with hooks wired up + a `YOUR-USER`
   placeholder that `scripts/install-claude-config.sh` substitutes
 - `claude/CLAUDE.md.template` — thin global Claude Code instructions
@@ -148,10 +152,9 @@ claude-code-starter/
 **Coming in follow-up passes:**
 - `project-template/.gcloudignore.template` (and other useful per-project
   defaults)
-- More portable skills (db-migrate, db-verify, schema-diff, log-tail,
-  code-cleanup, repo-assessment — currently project-pathed in the
-  source, need generalization. Will likely extend
-  `projects-config.json` with `database` and `services` blocks.)
+- Additional skill kinds for `log-tail` (currently supports `cloud-run`
+  only; AWS / Heroku / etc. would be straightforward to add following
+  the same `service.kind` switching pattern)
 
 ## Why opinionated?
 

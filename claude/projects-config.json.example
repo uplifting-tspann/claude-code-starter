@@ -1,5 +1,5 @@
 {
-  "_README": "Copy this file to ~/.claude/projects-config.json and edit it to describe your projects. Skills (proof, cross-repo-search, test-runner) read this to know where your code lives and how to drive it. The installer does NOT auto-copy this — it's user-specific config.",
+  "_README": "Copy this file to ~/.claude/projects-config.json and edit it to describe your projects. Skills (proof, cross-repo-search, test-runner, db-migrate, db-verify, schema-diff, log-tail, code-cleanup, repo-assessment) read this to know where your code lives, how to drive it, where databases live, and which deployed services exist. The installer does NOT auto-copy this — it's user-specific config.",
 
   "projects": [
     {
@@ -9,14 +9,21 @@
       "frontend": {
         "path": "src",
         "dev_command": "npm run dev",
-        "dev_url": "http://localhost:5173"
+        "dev_url": "http://localhost:5173",
+        "lint_command": "npm run lint",
+        "typecheck_command": "npx tsc --noEmit"
       },
       "tests": {
         "unit": "npm test",
         "e2e": "npm run test:e2e",
         "smoke": "npm run test:e2e:smoke"
+      },
+      "git": {
+        "integration_branch": "staging",
+        "production_branch": "main"
       }
     },
+
     {
       "name": "api",
       "path": "~/projects/api",
@@ -24,13 +31,50 @@
       "backend": {
         "path": ".",
         "dev_command": "python3 -m flask run",
-        "dev_url": "http://localhost:5000"
+        "dev_url": "http://localhost:5000",
+        "lint_command": "ruff check",
+        "typecheck_command": "mypy ."
       },
       "tests": {
         "unit": "pytest",
         "integration": "pytest -m integration"
-      }
+      },
+      "git": {
+        "integration_branch": "staging",
+        "production_branch": "main"
+      },
+      "database": {
+        "engine": "postgres",
+        "proxy_command": "cloud-sql-proxy my-gcp-project:us-central1:my-instance --port=5433",
+        "host": "127.0.0.1",
+        "port": 5433,
+        "user": "admin",
+        "password_env": "DB_PASS",
+        "schema_file": "database/schema.sql",
+        "migrations_dir": "migrations",
+        "environments": [
+          { "name": "prod",    "db_name": "myapp_prod" },
+          { "name": "staging", "db_name": "myapp_staging" }
+        ]
+      },
+      "services": [
+        {
+          "name": "api-prod",
+          "kind": "cloud-run",
+          "environment": "production",
+          "cloud_project": "my-gcp-project",
+          "service_name": "myapp-api"
+        },
+        {
+          "name": "api-staging",
+          "kind": "cloud-run",
+          "environment": "staging",
+          "cloud_project": "my-gcp-project",
+          "service_name": "myapp-api-staging"
+        }
+      ]
     },
+
     {
       "name": "fullstack-app",
       "path": "~/projects/fullstack-app",
@@ -38,16 +82,23 @@
       "frontend": {
         "path": "frontend/src",
         "dev_command": "npm run dev --prefix frontend",
-        "dev_url": "http://localhost:3000"
+        "dev_url": "http://localhost:3000",
+        "lint_command": "npm run lint --prefix frontend",
+        "typecheck_command": "cd frontend && npx tsc --noEmit"
       },
       "backend": {
         "path": "backend",
         "dev_command": "uvicorn backend.main:app --reload",
-        "dev_url": "http://localhost:8000"
+        "dev_url": "http://localhost:8000",
+        "lint_command": "ruff check backend"
       },
       "tests": {
         "unit": "npm test --prefix frontend && pytest backend",
         "e2e": "npx playwright test"
+      },
+      "git": {
+        "integration_branch": "staging",
+        "production_branch": "main"
       }
     }
   ],
@@ -67,5 +118,10 @@
     "include_extensions": [
       "py", "ts", "tsx", "js", "jsx", "sql", "md", "yaml", "yml", "json"
     ]
+  },
+
+  "reports": {
+    "_comment": "Where skills like repo-assessment write their dated output. Created if missing.",
+    "output_dir": "~/projects/nightly-assessments"
   }
 }
