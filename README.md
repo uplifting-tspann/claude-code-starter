@@ -82,7 +82,8 @@ claude-code-starter/
 │   ├── CLAUDE.md.template          Project-level conventions skeleton (sections for stack, infra, conventions, etc.)
 │   └── workstream-template/        state.md / decisions.md / open_questions.md
 └── scripts/
-    └── install-claude-config.sh    Installs claude/ skeleton into ~/.claude/
+    ├── install-claude-config.sh    Installs claude/ skeleton into ~/.claude/
+    └── sync-from-source.sh         Diffs your live ~/.claude against the template; report/diff/interactive modes
 ```
 
 ## What's in v0.1 vs. coming
@@ -123,6 +124,12 @@ claude-code-starter/
   check + config installer)
 - `scripts/install-claude-config.sh` — copies `claude/` skeleton into
   `~/.claude/` with skip-existing default + `--force` for overwrites
+- `scripts/sync-from-source.sh` — diffs your live `~/.claude/{rules,
+  skills,hooks}` against the template repo's `claude/` dir. Default
+  is a read-only report; `--diff` includes unified diffs; `--interactive`
+  prompts per-file (promote LIVE→template, update template→LIVE, skip).
+  Run periodically to keep the template and your live install in sync
+  as both evolve
 - `Brewfile` capturing the toolchain
 - `project-template/workstream-template/` — state.md / decisions.md /
   open_questions.md pattern
@@ -135,8 +142,6 @@ claude-code-starter/
   code-cleanup, repo-assessment — currently project-pathed in the
   source, need generalization. Will likely extend
   `projects-config.json` with `database` and `services` blocks.)
-- `scripts/sync-from-source.sh` — keep the template in sync with your live
-  `~/.claude/` as you iterate
 - `.vscode/extensions.json` — recommended VS Code extensions
 
 ## Why opinionated?
