@@ -66,7 +66,7 @@ and `claude` interactively.
 ```
 claude-code-starter/
 ├── README.md                       This file — quickstart + what ships in v0.1
-├── WHY.md                          [coming] Pedagogical: why each rule exists
+├── WHY.md                          Pedagogical deep dive: why each rule/pattern exists
 ├── LICENSE                         MIT
 ├── bootstrap.sh                    One-shot macOS machine setup
 ├── Brewfile                        Homebrew formulae + cask for bootstrap
@@ -88,6 +88,10 @@ claude-code-starter/
 ## What's in v0.1 vs. coming
 
 **Shipped:**
+- [`WHY.md`](WHY.md) — pedagogical deep dive: why each rule/pattern
+  exists, when to use rules vs. skills vs. hooks, how to evolve the
+  system. Read this if you're trying to understand the workflow rather
+  than just copy it.
 - 10 portable rules in `claude/rules/`, scrubbed of project-specific
   references (proof-of-work, what's-next, commit-discipline, no-glazing,
   dates-and-times, WCAG-AA contrast, verify-db-objects, e2e-test-evolution,
@@ -113,7 +117,6 @@ claude-code-starter/
 - More portable skills (test-runner, db-migrate, db-verify, schema-diff,
   log-tail, code-cleanup, cross-repo-search — currently project-pathed in
   the source, need generalization)
-- `WHY.md` — the deep dive: why each rule, when to use what, how to evolve
 - `scripts/sync-from-source.sh` — keep the template in sync with your live
   `~/.claude/` as you iterate
 - `.vscode/extensions.json` — recommended VS Code extensions
@@ -125,6 +128,10 @@ with no point of view. The value here is the *opinions*: what conventions
 actually pay off in practice, why each rule exists, what failure mode it
 prevents. Fork it and bend it to your stack — but the opinions are the
 deliverable.
+
+For the long version — when to use rules vs. skills vs. hooks, why the
+mandatory end-of-turn sections matter, the workstream model, how to
+evolve the system as you go — read [WHY.md](WHY.md).
 
 ## License
 
