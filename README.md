@@ -76,10 +76,10 @@ claude-code-starter/
 │   ├── skills/                     1 portable skill so far (more coming)
 │   ├── hooks/                      Stop hook + pre-commit checker
 │   ├── memory/                     [coming] Memory model template
-│   ├── CLAUDE.md.template          [coming] Global instructions skeleton
+│   ├── CLAUDE.md.template          Global instructions skeleton (thin — identity + universal prefs)
 │   └── settings.json.template      Hooks wiring + permissions (with YOUR-USER placeholder)
-├── project-template/               [coming] Per-project scaffolding
-│   ├── CLAUDE.md.template          Project-level conventions skeleton
+├── project-template/               Scaffolding for each new project
+│   ├── CLAUDE.md.template          Project-level conventions skeleton (sections for stack, infra, conventions, etc.)
 │   └── workstream-template/        state.md / decisions.md / open_questions.md
 └── scripts/
     └── install-claude-config.sh    Installs claude/ skeleton into ~/.claude/
@@ -101,6 +101,13 @@ claude-code-starter/
 - 1 skill in `claude/skills/` (consolidate-memory)
 - `claude/settings.json.template` with hooks wired up + a `YOUR-USER`
   placeholder that `scripts/install-claude-config.sh` substitutes
+- `claude/CLAUDE.md.template` — thin global Claude Code instructions
+  (identity + universal prefs); installer writes it (or
+  `CLAUDE.md.suggested` alongside existing) without auto-overwriting
+- `project-template/CLAUDE.md.template` — per-project conventions
+  skeleton with sections for stack, infra, DB, frontend/backend
+  conventions, testing, deploy — fill in the bracketed placeholders
+  when scaffolding a new project from this template
 - `bootstrap.sh` — macOS machine setup (Homebrew + Brewfile + Claude Code
   check + config installer)
 - `scripts/install-claude-config.sh` — copies `claude/` skeleton into
@@ -111,9 +118,9 @@ claude-code-starter/
 - LICENSE, .gitignore, this README
 
 **Coming in follow-up passes:**
-- `claude/CLAUDE.md.template` — global instructions skeleton with placeholders
 - `claude/memory/` — MEMORY.md index pattern + per-topic file template
-- `project-template/CLAUDE.md.template` and `.gcloudignore.template`
+- `project-template/.gcloudignore.template` (and other useful per-project
+  defaults)
 - More portable skills (test-runner, db-migrate, db-verify, schema-diff,
   log-tail, code-cleanup, cross-repo-search — currently project-pathed in
   the source, need generalization)

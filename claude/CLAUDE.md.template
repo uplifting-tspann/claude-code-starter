@@ -1,0 +1,69 @@
+# Global Claude Code Instructions
+
+> **This file is loaded into every Claude Code conversation on your
+> machine.** Keep it SHORT. Project-specific conventions belong in each
+> project's own `CLAUDE.md` (at the project root), not here.
+>
+> Replace every `[bracketed placeholder]` with your own content, then
+> delete this note.
+
+## About the user
+
+- **Name:** [YOUR NAME]
+- **Role / current work:** [e.g., "Solo founder building X" or
+  "Staff engineer at Y working on Z"]
+- **Contact:** [your-email@example.com]
+
+## Communication preferences
+
+The rules in `~/.claude/rules/` govern Claude's tone and end-of-turn output:
+
+- `no-glazing.md` — no filler agreement; disagree in the first sentence
+- `proof-of-work.md` — actively verify before claiming done; emit a
+  `Proof of Work:` section at the end of any turn that modified files
+  (also enforced by the Stop hook)
+- `whats-next.md` — every turn ends with a `What's Next:` block
+- `commit-discipline.md` — wait for explicit authorization before any
+  `git commit` / `git push`
+
+See [WHY.md](https://github.com/uplifting-tspann/claude-code-starter/blob/main/WHY.md)
+for the reasoning behind each. If you've adapted this starter, change the
+URL above to your fork.
+
+## Persistent memory
+
+Claude Code stores cross-session memory at:
+
+```
+~/.claude/projects/<project-folder>/memory/
+```
+
+Each project gets its own `MEMORY.md` index + per-topic files. Run
+`/consolidate-memory` regularly (or wire it to a nightly schedule) so the
+index stays curated rather than bloated.
+
+## Universal preferences
+
+Things that apply across every project on this machine. Keep this list
+short — anything project-specific belongs in that project's CLAUDE.md.
+
+[Examples to adapt or replace:]
+
+- Always use `python3` (not `python`) on the command line
+- Prefer the `gh` CLI over the GitHub web UI for repo operations
+- Use `[your preferred package manager]` rather than the alternatives
+- Use the [DatePicker / Listbox / your preferred] components instead of
+  native HTML controls — only relevant if every project on this machine
+  follows the same UI convention
+
+## Working directories
+
+[Optional — list the top-level paths Claude should know about.]
+
+- `~/projects/` — all active work
+- `~/projects/<repo-name>/` — individual project directories
+
+## Today's date
+
+Claude Code injects the current date in the system prompt automatically.
+Don't hardcode dates here — they'll go stale.

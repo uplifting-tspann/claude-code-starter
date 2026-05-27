@@ -1,0 +1,223 @@
+# [PROJECT NAME] — Project Context
+
+> **This file is loaded by Claude Code when working inside this project's
+> directory.** It captures the conventions, architecture, commands, and
+> gotchas Claude needs to know to generate good code here.
+>
+> Replace every `[bracketed placeholder]` with your own content. Delete
+> sections that don't apply. Add sections that aren't here. The shape
+> below is a starting point, not a contract.
+>
+> **Update this as the project evolves.** Stale CLAUDE.md content shapes
+> Claude's output in subtle wrong ways.
+
+---
+
+## Project overview
+
+**One-line description:** [What this project does, in one sentence a
+stranger could understand.]
+
+**Status:** [pre-launch | live | maintenance | sunset]
+
+**Stack:** [e.g., "TypeScript + React + Vite frontend; Python/Flask
+backend; PostgreSQL on Cloud SQL; GCP Cloud Run + Firebase Hosting."]
+
+**Public URL(s):** [if applicable]
+
+---
+
+## Repo layout
+
+```
+[repo-root]/
+├── [frontend dir]/           [Frontend app — React/Vue/etc.]
+├── [backend dir]/            [Backend app — Flask/FastAPI/Express/etc.]
+├── [shared dir]/             [Shared types, utils, contracts]
+├── [docs dir]/               [Documentation]
+└── [scripts dir]/            [Dev / deploy / ops scripts]
+```
+
+## Quick reference (shorthand → path)
+
+When the user says "frontend" or "backend," Claude should know what they
+mean without asking:
+
+- "frontend" → `[path/to/frontend/src]`
+- "backend" → `[path/to/backend]`
+- "tests" → `[path/to/tests]`
+- "[any other shorthand]" → `[path]`
+
+---
+
+## Feature ownership
+
+Which areas of the codebase own which features. Helps Claude land changes
+in the right place without searching the whole repo.
+
+| Feature | Frontend | Backend |
+|---------|----------|---------|
+| [Feature A] | `[path]` | `[path]` |
+| [Feature B] | `[path]` | `[path]` |
+
+---
+
+## Infrastructure
+
+- **Cloud provider:** [GCP / AWS / Azure / Vercel / Render / Fly / etc.]
+- **Database:** [PostgreSQL / MySQL / DynamoDB / SQLite / etc. — name the
+  flavor, version if it matters]
+- **Backend hosting:** [Cloud Run / EC2 / Lambda / Vercel / etc.]
+- **Frontend hosting:** [Firebase Hosting / Vercel / Cloudflare Pages /
+  Netlify / S3+CloudFront / etc.]
+- **CI/CD:** [GitHub Actions / Cloud Build / CircleCI / etc. — name the
+  trigger pattern, e.g., "push to staging deploys to staging"]
+- **Secrets:** [Secret Manager / SSM Parameter Store / .env + 1Password /
+  Doppler / etc.]
+
+[If you have multiple environments — staging, prod, demo, preview — list
+them here with URLs and what triggers each.]
+
+---
+
+## Database
+
+[If you have any non-trivial DB conventions, document them. Examples to
+adapt:]
+
+- **Connection:** [How to connect locally — Cloud SQL Proxy on port X,
+  Docker Compose, etc.]
+- **Migrations:** [Where they live, how to run them, naming convention]
+- **Schema parity:** [Do staging and prod schemas need to stay in sync? How?]
+- **User roles:** [Which DB role does the app run as? Which role runs
+  migrations? Why separate?]
+- **Conventions:** [Empty-string-to-NULL, enum validation, UUID handling,
+  cross-DB references, etc. — pull patterns into separate rules under
+  `~/.claude/rules/` if they apply to multiple projects]
+
+---
+
+## Command line
+
+[Project-specific CLI conventions and common commands.]
+
+- **Local dev:** `[command]`
+- **Run tests:** `[command]`
+- **Lint / typecheck:** `[command]`
+- **Build:** `[command]`
+- **Database shell:** `[command]`
+
+---
+
+## Frontend conventions
+
+[Component library, styling system, patterns to follow/avoid.]
+
+- **Styling:** [Tailwind / CSS modules / styled-components / etc.]
+- **Component library:** [Headless UI / Radix / Material UI / shadcn / etc.]
+- **State management:** [Context / Zustand / Redux / React Query / etc.]
+- **Routing:** [React Router / Next.js / etc.]
+- **Banned patterns:** [Native `<select>` / `<input type="date">` /
+  inline styles / hardcoded colors / etc. — list what to use instead]
+
+---
+
+## Backend conventions
+
+[Code style, error handling, common patterns / gotchas.]
+
+- **Framework:** [Flask / FastAPI / Express / NestJS / etc.]
+- **Auth:** [JWT / session cookies / OAuth provider]
+- **Error handling:** [How errors propagate, how they're logged, common
+  pitfalls — e.g., "always include `exc_info=True` on logger.error"]
+- **External integrations:** [Stripe, Resend, etc. — patterns like
+  "save to DB first, then sync to external"]
+- **Banned patterns:** [Common mistakes that have caused incidents]
+
+---
+
+## Testing
+
+- **Unit tests:** `[command]` ([framework — Vitest / Jest / Pytest])
+- **E2E tests:** `[command]` ([framework — Playwright / Cypress])
+- **Smoke tests:** `[command]` ([if you have a smoke subset])
+- **Real-DB / integration tests:** [If you have a non-mocked test layer,
+  document how to run it and what it covers]
+
+[Coverage expectations — what categories of changes require tests? See
+the `e2e-test-evolution.md` rule.]
+
+---
+
+## Deployment
+
+[How code reaches production. Don't be vague — the steps Claude needs to
+know about pushing.]
+
+- **Integration branch:** `[staging / develop]` — push here for staging
+  deploys
+- **Production branch:** `[main / production]` — promoted via PR
+- **What triggers a deploy:** [Push / merge / manual / etc.]
+- **How long a deploy takes:** [Approximate range — sets expectations]
+- **Rollback:** [How to roll back if something breaks]
+
+[Per the `commit-discipline.md` rule, Claude never auto-pushes — but it
+helps for Claude to know the cost of each push when explaining the impact.]
+
+---
+
+## SQL / migrations
+
+[If migrations are non-trivial, document them.]
+
+- **Where they live:** `[path]`
+- **How to run:** `[command]`
+- **Naming convention:** `[NNN_description.sql]`
+- **Environment parity:** [Does every migration need to run on staging
+  AND prod? How is that enforced?]
+- **Migration cleanup:** [Are ad-hoc fix files deleted after running? Is
+  there a canonical schema.sql to update?]
+
+---
+
+## Documentation
+
+- **Project docs:** `[path]` (e.g., `docs/`, `wiki/`, Notion link)
+- **Public docs:** [URL, if applicable]
+- **Changelog:** [URL or file path, if applicable — see
+  `~/.claude/rules/changelog-evolution.md`]
+- **Help articles:** [URL or file path, if applicable — see
+  `~/.claude/rules/help-article-evolution.md`]
+
+---
+
+## What NOT to do
+
+[Project-specific anti-patterns. Things that have caused incidents,
+even small ones. The more concrete, the better.]
+
+- [e.g., "Don't use `git push --force` to `main` — production rolls
+  immediately and there's no PR review gate."]
+- [e.g., "Don't auto-merge PRs without the staging smoke run passing."]
+- [e.g., "Don't run migrations without first applying them on staging."]
+
+---
+
+## Project-specific rules
+
+If you have conventions that apply ONLY to this project, write them as
+rules and scope them to this directory:
+
+```yaml
+---
+applies-to: ["~/projects/[this-project]/**"]
+---
+
+# Project-Specific Rule
+...
+```
+
+Drop them in `~/.claude/rules/` — they'll only load when you're working
+in this project. For conventions that apply across all your projects,
+write the rule unscoped (loads globally) and store it in
+`~/.claude/rules/` directly.

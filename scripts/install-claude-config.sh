@@ -183,6 +183,50 @@ for hook in "$SOURCE_DIR"/hooks/*.sh; do
 done
 
 # -----------------------------------------------------------------------------
+# CLAUDE.md (special — placeholder-bearing user-edit file, never auto-overwrite)
+# -----------------------------------------------------------------------------
+
+header "Global CLAUDE.md"
+src="$SOURCE_DIR/CLAUDE.md.template"
+dst="$DEST_DIR/CLAUDE.md"
+suggested="$DEST_DIR/CLAUDE.md.suggested"
+
+if [ ! -f "$src" ]; then
+  echo "  WARNING: $src not found — skipping CLAUDE.md install."
+else
+  if [ "$DRY_RUN" = 1 ]; then
+    if [ ! -e "$dst" ]; then
+      echo "  would install (with [PLACEHOLDER] markers — edit by hand after):  ~/.claude/CLAUDE.md"
+      INSTALLED=$((INSTALLED + 1))
+    elif [ "$FORCE" = 1 ]; then
+      bak="$dst.bak.$(date +%Y%m%d%H%M%S)"
+      echo "  would overwrite (backup: ~/${bak#$HOME/}):  ~/.claude/CLAUDE.md"
+      OVERWRITTEN=$((OVERWRITTEN + 1))
+    else
+      echo "  would write suggested file (existing CLAUDE.md preserved):  ~/.claude/CLAUDE.md.suggested"
+      SUGGESTED=$((SUGGESTED + 1))
+    fi
+  else
+    if [ ! -e "$dst" ]; then
+      cp "$src" "$dst"
+      echo "  installed (edit the [PLACEHOLDER] markers by hand):  ~/.claude/CLAUDE.md"
+      INSTALLED=$((INSTALLED + 1))
+    elif [ "$FORCE" = 1 ]; then
+      bak="$dst.bak.$(date +%Y%m%d%H%M%S)"
+      mv "$dst" "$bak"
+      cp "$src" "$dst"
+      echo "  overwrote (backup: ~/${bak#$HOME/}):  ~/.claude/CLAUDE.md"
+      OVERWRITTEN=$((OVERWRITTEN + 1))
+    else
+      cp "$src" "$suggested"
+      echo "  wrote suggested file (existing CLAUDE.md preserved):  ~/.claude/CLAUDE.md.suggested"
+      echo "                                                       → diff and merge by hand"
+      SUGGESTED=$((SUGGESTED + 1))
+    fi
+  fi
+fi
+
+# -----------------------------------------------------------------------------
 # settings.json (special — username substitution, never auto-overwrite)
 # -----------------------------------------------------------------------------
 
