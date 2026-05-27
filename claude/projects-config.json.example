@@ -1,0 +1,71 @@
+{
+  "_README": "Copy this file to ~/.claude/projects-config.json and edit it to describe your projects. Skills (proof, cross-repo-search, test-runner) read this to know where your code lives and how to drive it. The installer does NOT auto-copy this — it's user-specific config.",
+
+  "projects": [
+    {
+      "name": "frontend-app",
+      "path": "~/projects/frontend-app",
+      "type": "frontend",
+      "frontend": {
+        "path": "src",
+        "dev_command": "npm run dev",
+        "dev_url": "http://localhost:5173"
+      },
+      "tests": {
+        "unit": "npm test",
+        "e2e": "npm run test:e2e",
+        "smoke": "npm run test:e2e:smoke"
+      }
+    },
+    {
+      "name": "api",
+      "path": "~/projects/api",
+      "type": "backend",
+      "backend": {
+        "path": ".",
+        "dev_command": "python3 -m flask run",
+        "dev_url": "http://localhost:5000"
+      },
+      "tests": {
+        "unit": "pytest",
+        "integration": "pytest -m integration"
+      }
+    },
+    {
+      "name": "fullstack-app",
+      "path": "~/projects/fullstack-app",
+      "type": "fullstack",
+      "frontend": {
+        "path": "frontend/src",
+        "dev_command": "npm run dev --prefix frontend",
+        "dev_url": "http://localhost:3000"
+      },
+      "backend": {
+        "path": "backend",
+        "dev_command": "uvicorn backend.main:app --reload",
+        "dev_url": "http://localhost:8000"
+      },
+      "tests": {
+        "unit": "npm test --prefix frontend && pytest backend",
+        "e2e": "npx playwright test"
+      }
+    }
+  ],
+
+  "search": {
+    "exclude_globs": [
+      "node_modules",
+      "dist",
+      "build",
+      ".git",
+      "venv",
+      ".venv",
+      "__pycache__",
+      ".next",
+      "coverage"
+    ],
+    "include_extensions": [
+      "py", "ts", "tsx", "js", "jsx", "sql", "md", "yaml", "yml", "json"
+    ]
+  }
+}
