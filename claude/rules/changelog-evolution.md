@@ -26,6 +26,7 @@ The writing happens later in batch — but the evaluation happens now.
 | **Third-party integration work shipped** | Flag as `integration` candidate. |
 | **User-facing or compliance-relevant security change** | Flag as `security` candidate. |
 | **Admin-only work, internal tooling, refactor, test/CI, copy fix, alignment fix** | "Not applicable" with one-line reason. |
+| **Feature in a product/area your changelog doesn't cover** | "Not applicable — <area>, not customer-facing in the changelog's scope." If you ship multiple products and the changelog (or its batch skill) is scoped to one of them, work in the others is out of scope for this rule even if it's technically user-visible. Say which area, so the decision is auditable. |
 
 ## Where the Changelog Lives (fill in for your project)
 
@@ -77,18 +78,22 @@ When genuinely uncertain, **default to candidate** with a note ("not sure if thi
 
 ## Interaction with Other Rules
 
-- **Help article evolution**: related but distinct. Help articles cover *how to use* a feature; changelog entries announce *that the feature shipped*. A feature may warrant both, one, or neither. Report each section independently.
-- **Proof of Work**: the `Changelog:` section is part of the end-of-turn summary, not a replacement for the `Proof of Work:` section. Include both.
-- **Commit discipline**: this rule does NOT trigger an automatic changelog publish. The user decides when to batch — typically after a few related commits land or before a public announcement.
+- **Help article evolution** (`help-article-evolution.md`): related but distinct. Help articles cover *how to use* a feature; changelog entries announce *that the feature shipped*. A feature may warrant both, one, or neither. Report each section independently.
+- **Proof of Work** (`proof-of-work.md`): the `Changelog:` section is part of the end-of-turn summary, not a replacement for the `Proof of Work:` section. Include both.
+- **Commit discipline** (`commit-discipline.md`): this rule does NOT trigger an automatic changelog publish. The user decides when to batch — typically after a few related commits land on the integration branch or before a public announcement.
+- **Your project's copy/voice guide, if you have one**: the candidate title is user-facing copy. Whatever forbidden-word list or voice rules govern your product copy still apply here. If you wouldn't ship the title on a button, don't propose it as a candidate title.
 
 ## Anti-Patterns (Never Do)
 
 - Shipping a customer-visible feature without flagging a candidate in the end-of-turn summary
-- Auto-publishing changelog entries without the user's approval — batch + approval gate is the point
-- Editing the changelog source of truth by hand when a dedicated skill exists for it
+- Auto-invoking the batch/publish skill without the user asking — the batch + approval gate is the whole point. If your skill framework supports it, mark the skill as non-model-invocable.
+- Editing the changelog source of truth by hand when a dedicated skill exists for it — the skill should be the only writer
 - Drafting marketing-voice candidate titles ("Revolutionize your workflow with smarter templates") — peer voice only
+- Treating internal-admin work as customer changelog material — if your changelog is scoped to the customer-facing product, admin tooling doesn't belong in it
 - Skipping the `Changelog:` section because "nothing changelog-worthy shipped" — say "Not applicable — <reason>" explicitly so the decision is auditable
 
 ## Why This Matters
 
-The changelog is one of the most direct signals users have that the product is alive and improving. When customer-visible work ships and the changelog doesn't reflect it for weeks, users stop trusting the page — which makes the next launch announcement land softer than it should. This rule keeps every change consciously evaluated at ship time so the batch sweeps catch what matters.
+The changelog is one of the most direct signals users have that the product is alive and improving. When customer-visible work ships and the changelog doesn't reflect it for weeks, users stop trusting the page — which makes the next launch announcement land softer than it should.
+
+A batch skill that sweeps `git log` will pick up everything anyway — but *only if it's actually run*. This rule keeps every change consciously evaluated at ship time, so the batch sweeps catch what matters and the user knows when to trigger them.

@@ -1,5 +1,5 @@
 {
-  "_README": "Copy this file to ~/.claude/projects-config.json and edit it to describe your projects. Skills (proof, cross-repo-search, test-runner, db-migrate, db-verify, schema-diff, log-tail, code-cleanup, repo-assessment) read this to know where your code lives, how to drive it, where databases live, and which deployed services exist. The installer does NOT auto-copy this — it's user-specific config.",
+  "_README": "Copy this file to ~/.claude/projects-config.json and edit it to describe your projects. Skills (proof, cross-repo-search, test-runner, db-migrate, db-verify, schema-diff, log-tail, code-cleanup, repo-assessment, error-triage, release-notes, deploy-check, api-scaffold) read this to know where your code lives, how to drive it, where databases live, which deployed services exist, and where CI and error tracking are configured. The installer does NOT auto-copy this — it's user-specific config.",
 
   "projects": [
     {
@@ -19,8 +19,23 @@
         "smoke": "npm run test:e2e:smoke"
       },
       "git": {
+        "_comment": "release-notes diffs integration_branch against production_branch. github_repo is only needed if you ask it to open the promotion PR.",
         "integration_branch": "staging",
-        "production_branch": "main"
+        "production_branch": "main",
+        "github_repo": "your-org/frontend-app"
+      },
+      "error_tracking": {
+        "_comment": "Optional. Read by the error-triage skill. Slugs as they appear in your tracker's URLs. source_paths are relative to `path` and are grepped when tracing a stack frame back to source.",
+        "provider": "sentry",
+        "org_slug": "your-org-slug",
+        "project_slug": "your-frontend-project-slug",
+        "source_paths": ["src"]
+      },
+      "ci": {
+        "_comment": "Optional. Read by the deploy-check skill. Swap `provider` and see the deploy-check SKILL.md for GitHub Actions / GitLab CI equivalents.",
+        "provider": "cloud-build",
+        "cloud_project": "my-gcp-project",
+        "repo_name": "frontend-app"
       }
     },
 
@@ -41,7 +56,19 @@
       },
       "git": {
         "integration_branch": "staging",
-        "production_branch": "main"
+        "production_branch": "main",
+        "github_repo": "your-org/api"
+      },
+      "error_tracking": {
+        "provider": "sentry",
+        "org_slug": "your-org-slug",
+        "project_slug": "your-api-project-slug",
+        "source_paths": ["."]
+      },
+      "ci": {
+        "provider": "cloud-build",
+        "cloud_project": "my-gcp-project",
+        "repo_name": "api"
       },
       "database": {
         "engine": "postgres",

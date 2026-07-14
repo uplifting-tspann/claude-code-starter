@@ -18,6 +18,23 @@ frontmatter describing the skill) and optionally helper scripts/templates.
 | `log-tail` | Tail logs for a deployed service — filtered by severity, time range, or pattern. Currently supports GCP Cloud Run; other cloud providers refuse cleanly. | Yes — needs `services[]` block |
 | `code-cleanup` | 7-track cleanup pass on a project (dedup, type consolidation, dead code, circular deps, type strengthening, error handling, deprecated/AI slop). Scan first, fix high-confidence items, verify per-batch. | Optional — better with `lint_command` / `typecheck_command` |
 | `repo-assessment` | Walks every project, reports staging/main divergence, CI health, open PRs, stale branches. Optionally auto-creates ready integration→production PRs where CI is green. | Yes — needs `git` block |
+| `release-notes` | Generates release notes from the commits between your integration branch and your production branch, before you open the promotion PR. Calls out migrations, env vars, and flags needed on promote. | Yes — needs `git` block |
+| `deploy-check` | Checks recent CI/CD deploy status across every project. Finds the step that actually **failed** (a build fails at the earliest failing step; everything after it is queued and never ran). | Yes — needs `ci` block |
+| `error-triage` | Pulls recent errors from your error tracker across projects, ranks by frequency and severity, traces each to source, and recommends fixes. | Yes — needs `error_tracking` block |
+| `api-scaffold` | Scaffolds a backend API endpoint with the conventions pre-wired: UUID validation before the query, enum validation against real DB values, `''`→`NULL` coercion, savepoints around fallible writes, DB-first-then-external-sync, non-generic error messages with stack traces. | Optional |
+
+**Stack assumptions.** Four skills are built on a concrete stack and say so at
+the top of their `SKILL.md`, with pointers for swapping it out:
+
+- `deploy-check` → Google Cloud Build (GitHub Actions and GitLab alternatives
+  documented inline; only the query command changes)
+- `error-triage` → Sentry (the fetch→rank→trace→recommend shape is
+  tracker-agnostic; two `curl` calls need swapping)
+- `api-scaffold` → Flask + SQLAlchemy Core + PostgreSQL (the *conventions*
+  port to FastAPI/Express/Rails even though the code doesn't)
+- `db-migrate` / `db-verify` / `schema-diff` → PostgreSQL
+
+Keep them and adapt, or delete them. They're worked examples, not scripture.
 
 ## The shared config: `~/.claude/projects-config.json`
 
@@ -48,7 +65,10 @@ Schema, abbreviated:
         "lint_command": "...", "typecheck_command": "..."
       },
       "tests": { "unit": "...", "e2e": "...", "smoke": "...", "integration": "..." },
-      "git": { "integration_branch": "staging", "production_branch": "main" },
+      "git": {
+        "integration_branch": "staging", "production_branch": "main",
+        "github_repo": "owner/repo"
+      },
       "database": {
         "engine": "postgres", "proxy_command": "...", "host": "...",
         "port": ..., "user": "...", "password_env": "DB_PASS",
@@ -58,7 +78,14 @@ Schema, abbreviated:
       "services": [
         { "name": "...", "kind": "cloud-run", "environment": "...",
           "cloud_project": "...", "service_name": "..." }
-      ]
+      ],
+      "ci": {
+        "provider": "cloud-build", "cloud_project": "...", "repo_name": "..."
+      },
+      "error_tracking": {
+        "provider": "sentry", "org_slug": "...", "project_slug": "...",
+        "source_paths": ["backend/", "frontend/src/"]
+      }
     }
   ],
   "search":  { "exclude_globs": [...], "include_extensions": [...] },

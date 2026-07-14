@@ -35,6 +35,37 @@ statements.
 **Why:** Cheap belt to catch the easy mistakes before they hit a remote.
 Not a substitute for real secret scanning in CI.
 
+### `protect-production.sh`
+
+**Event:** `PreToolUse` matcher `Bash`.
+
+**⚠️ Inert until you edit it.** The script opens with a
+`# CONFIG — EDIT THIS BLOCK` header holding four arrays —
+`PROD_DATABASES`, `PROD_BRANCHES`, `PROD_SERVICES`, `PROD_CLOUD_PROJECTS`.
+It ships with `myapp_prod`-style placeholders. Fill in your real names or
+the hook protects nothing. An empty array skips its check.
+
+**What it does:** Blocks four classes of production accident before the
+command executes:
+
+- Destructive SQL (`DROP`, `TRUNCATE`, unqualified `DELETE`) against a
+  configured production database
+- `gcloud run services update --set-env-vars`, which **silently deletes
+  every environment variable not named in the command** (the additive
+  `--update-env-vars` passes)
+- Force-push or hard-reset to a production branch
+- Deletion of a production service
+
+**Why:** Catches the "wrong database" class of mistake — the one where the
+command is perfectly valid and you meant to run it, just not *there*.
+
+**It is a guardrail, not a security boundary.** It pattern-matches command
+strings and is trivially bypassed by anyone trying to. Its job is to catch
+you on autopilot, not to stop an adversary.
+
+Name-matching is boundary-aware, so `myapp_prod` blocks while
+`myapp_prod_staging` does not.
+
 ## Wiring hooks in settings.json
 
 Example (not full file — see `settings.json.template` once it ships):

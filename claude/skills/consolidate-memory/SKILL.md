@@ -1,3 +1,9 @@
+---
+name: consolidate-memory
+description: Read recent session transcripts and update the persistent memory files (recent-memory.md, long-term-memory.md). Run nightly on a schedule, or on demand to capture something from the current session.
+disable-model-invocation: true
+---
+
 # consolidate-memory
 
 Reads recent Claude session transcripts and updates the two persistent memory files.

@@ -46,9 +46,20 @@ Use the `/proof` skill for the structured protocol.
 
 The recurring failure mode: "I tested the feature for the first time and the FIRST thing I tried was a bug." The cause: features get marked done without active verification. The fix: make proof a non-skippable structured output. The "Not verified:" line surfaces gaps the user would otherwise discover by stumbling.
 
+This rule supersedes and unifies the loose reminders it replaces — post-feature validation, proactive bug hunting, "actually run the E2E test", "evolve tests with the feature" — by giving all of them a single enforceable output contract.
+
 ## Exemptions (no proof required)
 
 - Pure read/exploration turns (no Edit/Write/MultiEdit/NotebookEdit tool calls in the current turn) — hook auto-passes
 - Conversations that didn't modify files
 
 Everything else needs proof. When in doubt, write the short form.
+
+## Related rule — Re-entry Capsule
+
+The `Re-entry Capsule:` block (see `reentry-capsule.md`) shares this exact
+trigger (files modified) but lives at the TOP of the response rather than the
+bottom. The two together bookend every coding turn — Capsule says "where am
+I?"; Proof of Work says "did it actually work?". When you write one, you write
+the other (modulo the trivial-form shortcut, which both honor with the same
+reason).

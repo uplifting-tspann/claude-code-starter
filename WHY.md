@@ -94,20 +94,42 @@ is fine.
 
 ---
 
-## The five mandatory end-of-turn sections
+## The mandatory turn sections
 
-The rules in this starter mandate up to five sections at the end of
-any turn that modified files:
+The rules in this starter mandate a fixed structure around any turn
+that modified files. One block at the **top**, several at the
+**bottom**:
 
-1. `Proof of Work:`
-2. `Changelog:`
-3. `Help Content:`
-4. `What's Next:`
-5. (Implicit) The closing prose summary
+```
+Re-entry Capsule:     ← top of response, first thing on screen
+[response body]
+Proof of Work:
+Changelog:            (if your project publishes one)
+Help Content:         (if your project publishes it)
+Config Repo:          (if you mirror your config to a repo)
+What's Next:          ← always last, nothing follows it
+```
 
 Each exists because of a specific failure mode it prevents. Each is
-"mandatory" in the rule, and one (`Proof of Work:`) is also enforced
+"mandatory" in its rule, and one (`Proof of Work:`) is also enforced
 by a hook.
+
+### Re-entry Capsule — what it prevents
+
+**The failure:** You come back to a workstream you parked three days
+ago — or one of the eight you're running concurrently — and you have to
+scroll back through the chat to reconstruct where you were.
+
+That scroll-back cost is what caps how many workstreams you can run at
+once. The Capsule eliminates it by making the *last message of every
+chat* self-sufficient as re-entry state: workstream, goal, last action,
+next move, files touched. Five lines, at the top, so it's the first
+thing your eye lands on when you reopen a chat cold.
+
+It's the bookend to `What's Next:` — the Capsule says "where am I?",
+What's Next says "what do I do?" Neither requires scrolling.
+
+The rule: [`claude/rules/reentry-capsule.md`](claude/rules/reentry-capsule.md).
 
 ### Proof of Work — what it prevents
 
@@ -177,24 +199,41 @@ drift of "should there be more here?" at the end of finished work.
 
 The rule: [`claude/rules/whats-next.md`](claude/rules/whats-next.md).
 
+### Config Repo — what it prevents
+
+**The failure:** You codify a hard-won lesson as a rule, it lands in
+`~/.claude/`, and the shared/template copy of your config never hears
+about it. Six weeks later the repo you'd hand a new teammate is a
+museum piece.
+
+Conditional — only applies if you keep a second copy of your config in
+a repo. See **The sync problem** below for the full story, including
+how this exact repo rotted.
+
+The rule: [`claude/rules/starter-repo-sync.md`](claude/rules/starter-repo-sync.md).
+
 ### Why this specific order
 
-```
-Proof of Work:
-[then]
-Changelog: (if your project has one)
-[then]
-Help Content: (if your project has one)
-[then]
-What's Next: ← always last
-```
+Re-entry Capsule goes at the very top because its whole job is to be
+the first thing you see when you reopen a chat cold. If it's buried
+below a narrative lead-in, it has failed at the only thing it does.
 
-Proof of Work goes first because it's the load-bearing one — it
-proves the rest of the turn was real. Changelog and Help Content are
-side-effect concerns: "in addition to verifying the work, did we
-update the customer-facing surfaces?" What's Next goes last because
-it's the closer — the user reads it and immediately knows what to do
-or decide. Nothing should follow it.
+Then the body, then the bottom stack:
+
+Proof of Work goes first among the closers because it's the
+load-bearing one — it proves the rest of the turn was real. Changelog,
+Help Content, and Config Repo are side-effect concerns: "in addition to
+verifying the work, did we update the surfaces that must evolve with
+it?" Each one is a living artifact with no compiler to enforce it (see
+**Patterns worth stealing**, below).
+
+What's Next goes last because it's the closer — you read it and
+immediately know what to do or decide. Nothing should follow it.
+
+The common thread across all of them: **each requires an explicit answer
+even when the answer is "not applicable."** A forced "not applicable —
+here's why" is auditable. A silent skip is indistinguishable from an
+oversight, which is the whole failure mode.
 
 ---
 
@@ -439,36 +478,119 @@ for a working example.
 
 ### The sync problem
 
-This is the part that's hardest to get right.
+This is the part that's hardest to get right — and the part this repo
+got wrong first, in exactly the way this section predicted.
 
-Once you've installed `~/.claude/` from this template, your local
-config and the template will start diverging. You'll edit a rule.
-You'll add a new skill. You'll tweak a hook. Some of those changes are
-*general* (the next person to fork this template would benefit from
-them); some are *project-specific* (only relevant to your stack).
+Once you've installed `~/.claude/` from this template, your local config
+and the template start diverging. You edit a rule. You add a skill. You
+tweak a hook. Some of those changes are *general* (the next person to
+fork this would benefit); some are *project-specific* (only relevant to
+your stack). Without a deliberate cadence, your local install drifts away
+from the template and the template stops being a useful reference. A
+friend who clones it gets the old version of everything.
 
-Without a deliberate cadence, your local install drifts away from the
-template and stops being a useful reference. A friend who clones the
-template gets the old version of everything.
+Two things are needed, and they are not the same thing:
 
-The intended workflow (script coming):
+**1. A tool.** [`scripts/sync-from-source.sh`](scripts/sync-from-source.sh)
+walks `rules/`, `skills/`, and `hooks/`, diffs live against template, and
+categorizes every file as `IDENTICAL` / `DIFFERS` / `LIVE ONLY` /
+`TEMPLATE ONLY`. Run it read-only for a report, `--diff` to see what
+changed, or `--interactive` to promote (live → template) and pull
+(template → live) per file. It deliberately skips `CLAUDE.md`,
+`settings.json`, and `projects-config.json` — those are personalized and
+don't sync.
 
-- **`scripts/sync-from-source.sh`** (planned) — runs against your local
-  `~/.claude/` and diffs each file against the template. For each
-  difference, asks: "is this general (promote to template)? local
-  (leave alone)? template-newer (pull into local)?"
+**2. A trigger.** The tool existed for seven weeks and was never run once.
+In that window the live setup this repo mirrors gained 23 rules and 10
+skills, and *every one* of the ten rules the template did ship drifted in
+substance — commit-discipline grew an entire auto-staging model the
+template knew nothing about.
 
-- **Cadence** — quarterly sweep, plus a manual run after big workflow
-  shifts. The script makes the question routine, not heroic.
+The repo didn't rot because anyone decided to stop maintaining it. It
+rotted because nothing in the loop ever *asked*. **A tool with no trigger
+is a tool that doesn't get used** — which is the same lesson as "forcing
+functions beat reminders," applied to the harness itself.
 
-- **Decision principle** — when you edit a rule in your local install,
-  ask: *would the next person forking this template benefit from this
-  change?* If yes → push to template. If no → keep local.
+So the trigger is a rule:
+[`claude/rules/starter-repo-sync.md`](claude/rules/starter-repo-sync.md).
+Any turn that materially changes a file in `~/.claude/{rules,skills,hooks}`
+must emit a `Config Repo:` section sorting each changed file into one of
+three buckets:
 
-Until the sync script exists, the lower-tech approach: when you
-substantively change a rule, decide right then whether to also commit
-that change to the template repo. It's friction; without it, the
-template rots.
+- 🟢 **Portable** — promote. The lesson holds on a different codebase,
+  stack, and company.
+- 🟡 **Conditionally portable** — promote, but open the file with an
+  `> **Applicability:**` callout so a reader can decide in one line
+  whether to keep or delete it.
+- 🔴 **Project-specific** — don't promote. Inseparable from your products,
+  infra, or customers.
+
+The tiebreaker: **strip every proper noun from the file in your head. Is
+there still a rule left?** If yes, it's 🟢 or 🟡. If the file collapses
+without your product names, it's 🔴.
+
+The rule is report-only by design. It doesn't write to the template — it
+just makes the decision unskippable and auditable. The actual promotion
+stays a batch operation you run and review, because the sync script
+*copies verbatim* and every promoted file needs scrubbing (your name,
+your product names, your customers' names, your infra) before it goes
+public.
+
+One trap worth knowing: a promoted file shows as `DIFFERS` **forever**,
+because the template copy is scrubbed and the live copy isn't. That's by
+design, but it means `DIFFERS` tells you nothing about whether the
+*content* drifted — and it's easy to start ignoring the whole list.
+Adding a new rule while its ten neighbors quietly rot is the exact
+failure. `diff <template> <live> | grep -c '^[<>]'` separates scrub-noise
+(a handful of lines) from real drift (dozens).
+
+### Patterns worth stealing (that aren't shipped as rules)
+
+Most of the rules in the live setup this repo mirrors are 🔴 — too
+entangled with one company's products to ship. But several encode
+*shapes* that transfer even when the rule doesn't. If you're building
+your own rule set, these are the ones worth reinventing in your own
+terms:
+
+**The living-artifact evaluation.** Pick any artifact that must evolve
+with the product but has no compiler enforcing it — a changelog, a help
+center, a security/architecture page shown to prospects, demo data used
+in sales calls, an integration catalog, a test-scenario suite. Each one
+rots silently, and each rots the same way: the feature ships, nobody
+*asks* whether the artifact needed updating, and six weeks later it's
+lying to someone. The pattern is always identical: (a) a mandatory
+question at ship time, (b) a triggers→action table so the answer isn't a
+judgment call every time, (c) a required end-of-turn report section that
+must be written *even when the answer is "not applicable — here's why."*
+The forced not-applicable line is the load-bearing part. A silent skip is
+indistinguishable from an oversight. `changelog-evolution.md` and
+`help-article-evolution.md` are the two shipped here; the same skeleton
+generalizes to any artifact you own.
+
+**The fail-closed gate for autonomous action.** If your product can email
+or charge *your customer's* customers with no human in the loop — a cron,
+a webhook reaction, a queue drain, a "turn it on and forget it" setting —
+route every such path through exactly one function, default it to OFF,
+and make "do nothing and hold it as a draft" the safe posture. Put the
+gate *inside* the chokepoint, not in each caller, so a future caller is
+gated by default rather than by memory. Back it with a static CI audit
+that red-gates the build when a new egress path appears without going
+through the door. A wrongly-held action is a draft someone releases; a
+wrongly-sent one charged a stranger's client without permission. The
+failure modes are not symmetric, so when in doubt, gate it.
+
+**Keep-in-sync pairs.** Any time two surfaces must carry the same fields —
+a self-service settings page and its admin twin, a type declared in two
+modules, a permission enumerated in both a UI and a backend check — write
+the rule that names *both* paths explicitly and says "a change to one that
+isn't in the other is a bug." These drift constantly and cheaply, and the
+drift is invisible until a user hits the half that wasn't updated.
+
+**Product-voice rules.** A brief with a **forbidden-word list** ("platform",
+"seamless", "unlock", "revolutionize") does more to keep an LLM's copy in
+your voice than any amount of positive description. Ban the words. Models
+reach for them by default, and a banned-list is checkable in a way that
+"write in our voice" is not.
 
 ---
 

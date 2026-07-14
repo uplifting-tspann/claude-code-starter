@@ -72,9 +72,9 @@ claude-code-starter/
 ├── Brewfile                        Homebrew formulae + cask for bootstrap
 ├── .vscode/                        Recommended VS Code extensions + project-level editor settings
 ├── claude/                         Skeleton for your ~/.claude/ install
-│   ├── rules/                      10 portable rules (see claude/rules/README)
-│   ├── skills/                     1 portable skill so far (more coming)
-│   ├── hooks/                      Stop hook + pre-commit checker
+│   ├── rules/                      16 portable rules (see claude/rules/README)
+│   ├── skills/                     14 skills, most config-driven
+│   ├── hooks/                      Stop hook + pre-commit checker + prod guard
 │   ├── memory/                     Memory model templates (README + MEMORY.md.example + per-type examples)
 │   ├── CLAUDE.md.template          Global instructions skeleton (thin — identity + universal prefs)
 │   └── settings.json.template      Hooks wiring + permissions (with YOUR-USER placeholder)
@@ -93,18 +93,28 @@ claude-code-starter/
   exists, when to use rules vs. skills vs. hooks, how to evolve the
   system. Read this if you're trying to understand the workflow rather
   than just copy it.
-- 10 portable rules in `claude/rules/`, scrubbed of project-specific
-  references (proof-of-work, what's-next, commit-discipline, no-glazing,
-  dates-and-times, WCAG-AA contrast, verify-db-objects, e2e-test-evolution,
-  help-article-evolution, changelog-evolution)
-- 2 hooks in `claude/hooks/` (Stop hook enforcing Proof of Work; pre-commit
-  secret/console.log scanner)
-- 10 skills in `claude/skills/`: `consolidate-memory` (no config),
-  `proof` (optional config), and 8 config-driven skills —
+- 16 portable rules in `claude/rules/`, scrubbed of project-specific
+  references. **11 always-applicable** (proof-of-work, reentry-capsule,
+  what's-next, commit-discipline, no-glazing, diagnose-from-evidence,
+  dates-and-times, WCAG-AA contrast, verify-db-objects,
+  e2e-test-evolution, required-env-vars) and **5 conditional**, each
+  opening with an `> **Applicability:**` callout telling you in one line
+  whether to keep or delete it (changelog-evolution,
+  help-article-evolution, starter-repo-sync, test-fixture-schema-parity,
+  sqlalchemy-array-params). The **incidents** that motivate each rule are
+  kept — a rule with a real scar is a rule people follow
+- 3 hooks in `claude/hooks/` (Stop hook enforcing Proof of Work; pre-commit
+  secret/console.log scanner; production guard blocking destructive SQL,
+  `--set-env-vars` clobbers, and force-push to prod — **inert until you
+  edit its CONFIG block**)
+- 14 skills in `claude/skills/`: `consolidate-memory` (no config),
+  `proof` and `api-scaffold` (optional config), and 11 config-driven —
   `cross-repo-search`, `test-runner`, `db-migrate`, `db-verify`,
-  `schema-diff`, `log-tail`, `code-cleanup`, `repo-assessment`. All
-  read `~/.claude/projects-config.json` for project paths, dev/test
-  commands, database connection, deployed services, and git branch model
+  `schema-diff`, `log-tail`, `code-cleanup`, `repo-assessment`,
+  `release-notes`, `deploy-check`, `error-triage`. All read
+  `~/.claude/projects-config.json` for project paths, dev/test commands,
+  database connection, deployed services, CI, error tracker, and git
+  branch model
 - `claude/projects-config.json.example` — example schema for the
   shared per-project config (copy to `~/.claude/projects-config.json`
   and edit before invoking config-driven skills). Includes blocks for
