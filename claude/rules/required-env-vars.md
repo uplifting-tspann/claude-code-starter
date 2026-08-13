@@ -51,6 +51,10 @@ Silent fallback compromises security or bricks a core integration:
 - **URL constants that route external traffic** (`FRONTEND_URL`, `API_BASE_URL`,
   …). A hardcoded prod-URL fallback silently leaks prod URLs into dev test
   emails, OAuth state, and callback redirects.
+- **Environment-mode selectors** (`SANDBOX` vs `PRODUCTION`, `LIVE` vs
+  `TEST`). This is the worst one, because nothing errors — a missing value
+  with a plausible default just quietly points a live integration at the
+  wrong world (see "Why this rule exists" below).
 - **Environment-mode selectors** (`SANDBOX` vs `PRODUCTION`, `LIVE` vs `TEST`).
   See the incident below — this is the worst one, because nothing errors.
 

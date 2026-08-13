@@ -35,29 +35,33 @@ statements.
 **Why:** Cheap belt to catch the easy mistakes before they hit a remote.
 Not a substitute for real secret scanning in CI.
 
-### `protect-production.sh`
+### `guard-dangerous-bash.sh`
 
-**Event:** `PreToolUse` matcher `Bash`.
+**Event:** `PreToolUse`, matcher `Bash`.
 
 **⚠️ Inert until you edit it.** The script opens with a
-`# CONFIG — EDIT THIS BLOCK` header holding four arrays —
-`PROD_DATABASES`, `PROD_BRANCHES`, `PROD_SERVICES`, `PROD_CLOUD_PROJECTS`.
-It ships with `myapp_prod`-style placeholders. Fill in your real names or
-the hook protects nothing. An empty array skips its check.
+`# CONFIG — EDIT THIS BLOCK` header holding the arrays it checks against
+(`PROD_DATABASES`, `PROTECTED_BRANCHES`, `PROD_SERVICES`,
+`PROD_CLOUD_PROJECTS`, and similar). It ships with `myapp_prod`-style
+placeholders. Fill in your real names or the corresponding check no-ops.
 
-**What it does:** Blocks four classes of production accident before the
-command executes:
+**What it does:** Blocks classes of production/history accident before the
+command executes, via the `{"decision":"block","reason":"..."}`
+JSON-decision protocol (the reliable blocking form — not `exit 1`):
 
 - Destructive SQL (`DROP`, `TRUNCATE`, unqualified `DELETE`) against a
   configured production database
 - `gcloud run services update --set-env-vars`, which **silently deletes
   every environment variable not named in the command** (the additive
   `--update-env-vars` passes)
-- Force-push or hard-reset to a production branch
+- Direct push to a protected branch, `--amend`/`rebase` on shared history,
+  and force-push
 - Deletion of a production service
 
-**Why:** Catches the "wrong database" class of mistake — the one where the
-command is perfectly valid and you meant to run it, just not *there*.
+**Why:** Catches the "wrong database" / "wrong branch" class of mistake —
+the one where the command is perfectly valid and you meant to run it, just
+not *there* or not that way. Enforcement the harness runs beats enforcement
+the model has to remember.
 
 **It is a guardrail, not a security boundary.** It pattern-matches command
 strings and is trivially bypassed by anyone trying to. Its job is to catch
@@ -65,6 +69,32 @@ you on autopilot, not to stop an adversary.
 
 Name-matching is boundary-aware, so `myapp_prod` blocks while
 `myapp_prod_staging` does not.
+
+### `lesson-append.sh`
+
+**Event:** none — a plain CLI, invoked directly (typically from a review/
+hardening flow) via `~/.claude/hooks/lesson-append.sh --class ... --repo ...
+--file ...`.
+
+**What it does:** Appends one JSON line to `~/.claude/lessons.jsonl`, the
+ledger `../rules/lessons-ledger.md` describes. Concurrency-safe (one line
+stays under `PIPE_BUF` so the append is atomic across sessions).
+
+**Why:** Capture must be cheap and judgment-free, or it doesn't happen
+consistently. See `lessons-ledger.md` and the `lessons-audit` skill.
+
+### `lessons-audit-monthly.sh`
+
+**Event:** none — scheduled externally (launchd/cron), not a Claude Code
+hook event.
+
+**⚠️ macOS + Reminders app assumed** — see the `APPLICABILITY` comment at
+the top of the file for how to swap the notification step on another OS.
+
+**What it does:** Runs the deterministic half of the `lessons-audit` skill
+unattended, and only raises a reminder when something actually earned
+promotion (enforcement, a recurring class despite a rule, or a malformed
+ledger line). A quiet month costs nothing.
 
 ## Wiring hooks in settings.json
 

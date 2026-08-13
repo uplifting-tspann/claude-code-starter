@@ -21,6 +21,14 @@ a matching directory, the rule is included in the system prompt.
 | `verify-db-objects.md` | Verify function/enum/column names against the live DB before writing SQL. |
 | `e2e-test-evolution.md` | The E2E suite must evolve with every feature and fix. |
 | `required-env-vars.md` | Two-pattern framework for required config: the deploy config is the source of truth **and** the code fails loud in production when a var is missing. Kills the `os.getenv(X, dangerous_default)` bug class. |
+| `found-bug-never-abandoned.md` | A bug you didn't set out to fix is never silently abandoned — confirm it, then route it (fix now vs. capture durably), and report it. Threads the tension with parallel-session WIP hygiene. |
+| `lessons-ledger.md` | Occurrence-threshold promotion: 1 hit = a ledger line, 2 = a written rule, 3 = it must become executable (hook/lint/CI/test). Backed by `claude/hooks/lesson-append.sh` and the `lessons-audit` skill. |
+| `session-parallelism.md` | Multi-session discipline: serialize by default; a second concurrent session is only safe when repo, branch, and files are all independent. |
+| `deploy-order-shared-job-hazard.md` | A shared/platform-wide job (scheduler, webhook, sync job) that references a column a same-change migration just added must not deploy before that migration is verified applied. |
+| `new-write-path-completeness.md` | A new write path must reuse the table's existing guarded service (never hand-roll the SQL again) and satisfy every existing downstream reader's field requirements, not just the new feature's own read path. |
+| `failed-read-not-authoritative.md` | A failed fetch's fallback (`[]`, `0`, `null`) must never render as an indistinguishable genuine empty result — gate authoritative UI (counts, "no X exist" messages) on an explicit error state. |
+| `overlay-viewport-safety.md` | Every floating layer (dropdown, popover, date picker) must both escape overflow clipping (portal) AND stay inside the viewport (flip + clamp) — a portal alone isn't enough. |
+| `harden-before-push.md` | Adversarial challenge gate before pushing anything non-cosmetic: an independent agent hunts for footguns until a round finds zero confirmed blockers, bounded to 3 rounds. |
 
 ### Conditional — each opens with an `> **Applicability:**` callout
 

@@ -22,6 +22,7 @@ frontmatter describing the skill) and optionally helper scripts/templates.
 | `deploy-check` | Checks recent CI/CD deploy status across every project. Finds the step that actually **failed** (a build fails at the earliest failing step; everything after it is queued and never ran). | Yes — needs `ci` block |
 | `error-triage` | Pulls recent errors from your error tracker across projects, ranks by frequency and severity, traces each to source, and recommends fixes. | Yes — needs `error_tracking` block |
 | `api-scaffold` | Scaffolds a backend API endpoint with the conventions pre-wired: UUID validation before the query, enum validation against real DB values, `''`→`NULL` coercion, savepoints around fallible writes, DB-first-then-external-sync, non-generic error messages with stack traces. | Optional |
+| `lessons-audit` | Audits `~/.claude/lessons.jsonl` (the ledger `lessons-ledger.md` describes) and the rules corpus itself — which failure classes earned a rule or enforcement, which recurred despite a rule, which rules never fired, and whether the corpus is over budget. Deterministic half is `audit.py`. | Needs the ledger pattern already adopted |
 
 **Stack assumptions.** Four skills are built on a concrete stack and say so at
 the top of their `SKILL.md`, with pointers for swapping it out:
